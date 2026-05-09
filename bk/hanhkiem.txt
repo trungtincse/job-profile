@@ -1,0 +1,2 @@
+hvt,sinhnam,cmnd,ngaycapfull,captai,ap,xa,huyen,tinh,ngayki,thangki,namki
+1, , ,//,An Giang, , ,Thoại Sơn,An Giang,07,12,2024

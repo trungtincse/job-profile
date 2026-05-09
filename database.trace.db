@@ -1,0 +1,3 @@
+2026-05-08 21:30:14 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "PROFILE" not found; SQL statement:
+select * from PROFILE ORDER BY '-1' LIMIT '20' [42102-199]

@@ -1,0 +1,2 @@
+hvt,sinhngay,sinhthang,sinhnam,fullsinh,noisinh,cmnd,ngaycap,thangcap,namcap,ngaycapfull,captai,thuongtru,ap,xa,huyen,tinh,dantoc,tongiao,trinhdo,tencha,tuoicha,nghecha,hienocha,tenme,tuoime,ngheme,hienome,ac1,ac2,ac3,ngheac,hienoac,ngayki,thangki
+" "," "," "," "," "," "," "," "," "," ",//,An Giang, - Thoại Sơn - An Giang," "," ",Thoại Sơn,An Giang,Kinh,Phật," "," "," ",Làm ruộng,Thoại Sơn - ," "," ",Nội trợ,Thoại Sơn - ," "," "," ",Làm thuê," ",17,08

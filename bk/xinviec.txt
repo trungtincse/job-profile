@@ -1,0 +1,2 @@
+captai,cmnd,hvt,namcap,ngaycap,noisinh,sinhnam,sinhngay,sinhthang,thangcap,thuongtru,trinhdo,xa,ngayki,thangki,namki
+An Giang, ,1, , , , ,2, , , - Thoại Sơn - An Giang, , ,07,12,2024
