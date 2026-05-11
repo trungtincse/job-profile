@@ -18,6 +18,7 @@ public class ExportTemplate {
 		
 		// -----------------------hanh kiem---------------------------------
 		profile.exportHK();
+		profile.exportHKOCEO();
 		// -----------------------lylich---------------------------------
 		profile.exportLL();
 		// -----------------------lylich1---------------------------------
