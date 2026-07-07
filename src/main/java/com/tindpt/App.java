@@ -13,6 +13,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 import java.awt.event.ActionEvent;
@@ -459,69 +460,56 @@ public class App extends JFrame {
         btnXong = new JButton("Xong");
         btnXong.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                ArrayList<String> temp = new ArrayList<String>();
-                temp.add(textField_1.getText().trim());
-                temp.add(textField.getText().trim());
-                temp.add(textField_2.getText());
-                temp.add(textField_3.getText());// sinh nam
+                EnumMap<Field, String> data = new EnumMap<>(Field.class);
+                data.put(Field.HVT, textField_1.getText().trim());
+                data.put(Field.SINHNGAY, textField.getText().trim());
+                data.put(Field.SINHTHANG, textField_2.getText());
+                data.put(Field.SINHNAM, textField_3.getText());
                 if (textField_2.getText().isEmpty() || textField.getText().isEmpty() || textField_3.getText().isEmpty()) {
-                    temp.add(textField_3.getText());
+                    data.put(Field.FULLSINH, textField_3.getText());
                 } else {
-                    temp.add(textField.getText() + "/" + textField_2.getText() + "/" + textField_3.getText()); // full
-                }																												// sinh
-                temp.add(StringEscapeUtils.escapeCsv(textField_5.getText())); // noi sinh
-                temp.add(textField_4.getText()); // cmnd
-                temp.add(textField_9.getText()); // ngay cap
-                temp.add(textField_10.getText());
-                temp.add(textField_11.getText());
-                temp.add(textField_9.getText() + "/" + textField_10.getText() + "/" + textField_11.getText()); // ngaycapfull
-                temp.add(txtAnGiang_1.getText());// cap tai
+                    data.put(Field.FULLSINH, textField.getText() + "/" + textField_2.getText() + "/" + textField_3.getText());
+                }
+                data.put(Field.NOISINH, StringEscapeUtils.escapeCsv(textField_5.getText()));
+                data.put(Field.CMND, textField_4.getText());
+                data.put(Field.NGAYCAP, textField_9.getText());
+                data.put(Field.THANGCAP, textField_10.getText());
+                data.put(Field.NAMCAP, textField_11.getText());
+                data.put(Field.NGAYCAPFULL, textField_9.getText() + "/" + textField_10.getText() + "/" + textField_11.getText());
+                data.put(Field.CAPTAI, txtAnGiang_1.getText());
                 if (textField_6.getText().isEmpty()) {
-                    temp.add(textField_28.getText() + " - " + txtAnGiang.getText());// thuong
-                } // tru
-                else {
-                    temp.add(textField_6.getText() + " - " + textField_28.getText() + " - " + txtAnGiang.getText());// thuong
-                }																													// tru
-                temp.add(textField_6.getText());// ap
-                temp.add(textField_28.getText());// xa
-                temp.add("");// huyen
-                temp.add(txtAnGiang.getText());// tinh
-                temp.add(txtKinh.getText());// dantoc
-                temp.add(txtPha.getText());// tongiao
-                temp.add(textField_13.getText());// trinhdo
-                temp.add(textField_14.getText());
-                temp.add(textField_15.getText());
-                temp.add(txtLmRung.getText());
-                temp.add(textField_17.getText());// cha
-                temp.add(textField_20.getText());
-                temp.add(textField_21.getText());
-                temp.add(txtNiTr.getText());
-                temp.add(textField_18.getText());// me
-                if (textField_22.getText().isEmpty()) {
-                    temp.add("");
+                    data.put(Field.THUONGTRU, textField_28.getText() + " - " + txtAnGiang.getText());
                 } else {
-                    temp.add(textField_22.getText());// ac
+                    data.put(Field.THUONGTRU, textField_6.getText() + " - " + textField_28.getText() + " - " + txtAnGiang.getText());
                 }
-                if (textField_23.getText().isEmpty()) {
-                    temp.add("");
-                } else {
-                    temp.add(textField_23.getText());// ac
-                }
-                if (textField_24.getText().isEmpty()) {
-                    temp.add("");
-                } else {
-                    temp.add(textField_24.getText());// ac
-                }
-                temp.add(txtLmThu.getText());
-                temp.add(textField_26.getText());// hienoac
-                temp.add(textField_27.getText());// ki
-                temp.add(textField_7.getText()); // thangki
+                data.put(Field.AP, textField_6.getText());
+                data.put(Field.XA, textField_28.getText());
+                data.put(Field.HUYEN, "");
+                data.put(Field.TINH, txtAnGiang.getText());
+                data.put(Field.DANTOC, txtKinh.getText());
+                data.put(Field.TONGIAO, txtPha.getText());
+                data.put(Field.TRINHDO, textField_13.getText());
+                data.put(Field.TENCHA, textField_14.getText());
+                data.put(Field.TUOICHA, textField_15.getText());
+                data.put(Field.NGHECHA, txtLmRung.getText());
+                data.put(Field.HIENOCHA, textField_17.getText());
+                data.put(Field.TENME, textField_20.getText());
+                data.put(Field.TUOIME, textField_21.getText());
+                data.put(Field.NGHEME, txtNiTr.getText());
+                data.put(Field.HIENOME, textField_18.getText());
+                data.put(Field.AC1, textField_22.getText());
+                data.put(Field.AC2, textField_23.getText());
+                data.put(Field.AC3, textField_24.getText());
+                data.put(Field.NGHEAC, txtLmThu.getText());
+                data.put(Field.HIENOAC, textField_26.getText());
+                data.put(Field.NGAYKI, textField_27.getText());
+                data.put(Field.THANGKI, textField_7.getText());
                 Calendar cal = Calendar.getInstance();
                 int year = cal.get(Calendar.YEAR);
-                temp.add(String.valueOf(year));
+                data.put(Field.NAMKI, String.valueOf(year));
                 // ---------------------------//
                 try {
-                    Profile profile = new Profile(temp);
+                    Profile profile = new Profile(data);
                     ExportTemplate.export(profile);
                     profile.store2DB();
                     it = DatabaseController.selectWithStatement(-1, 20);

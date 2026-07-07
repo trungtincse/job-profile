@@ -1,18 +1,17 @@
 package com.tindpt;
 
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.EnumMap;
+import java.util.List;
 
 public class Profile {
 
-    private static final String DEFAULT_SEPARATOR = ",";
     private static final String NEW_LINE = "\r\n";
     private static final String TEXT_PATH = "d:\\";
     private static final String DSV_NAME = "xinviec.txt";
@@ -20,123 +19,78 @@ public class Profile {
     private static final String LL_NAME = "lylich.txt";
     private static final String HKOCEO_NAME = "hanhkiemoceo.txt";
     private static final String LL1_NAME = "lylich1.txt";
-    private static final String[] ATTRNAMEARRAY = {
-        "hvt",
-        "sinhngay",
-        "sinhthang",
-        "sinhnam",
-        "fullsinh",
-        "noisinh",
-        "cmnd",
-        "ngaycap",
-        "thangcap",
-        "namcap",
-        "ngaycapfull",
-        "captai",
-        "thuongtru",
-        "ap",
-        "xa",
-        "huyen",
-        "tinh",
-        "dantoc",
-        "tongiao",
-        "trinhdo",
-        "tencha",
-        "tuoicha",
-        "nghecha",
-        "hienocha",
-        "tenme",
-        "tuoime",
-        "ngheme",
-        "hienome",
-        "ac1",
-        "ac2",
-        "ac3",
-        "ngheac",
-        "hienoac",
-        "ngayki",
-        "thangki",
-        "namki"};
-    private static final ArrayList<String> ATTRNAMELIST = new ArrayList<String>(Arrays.asList(ATTRNAMEARRAY));
-    private static final int[] HK_LIST = {1, 4, 7, 11, 12, 14, 15, 16, 17, 34, 35, 36};
-    private static final int[] SV_LIST = {12, 7, 1, 10, 8, 6, 4, 2, 3, 9, 13, 20, 15, 34, 35, 36};
-    private static final int[] LL_LIST = {19, 18, 27, 32, 29, 30, 31, 26, 21, 24, 25, 33, 28, 13, 12, 11, 7, 6, 2, 23, 22, 3, 4, 1, 20};
-    private static final int[] HKOCEO_LIST = {19, 18, 27, 32, 29, 30, 31, 26, 21, 24, 25, 33, 28, 13, 12, 11, 7, 6, 2, 23, 22, 3, 4, 1, 20, 34, 35, 36};
-    private static final int[] LL1_LIST = {1, 34, 15, 35, 36};
-    private static final int[] KEY_LIST = {1, 2};
-    public ArrayList<String> profile;
 
-    public String Concat(ArrayList<String> list) {
-        return String.join(",", list);
+    private static final Field[] HK_LIST = {
+        Field.HVT, Field.SINHNAM, Field.CMND, Field.NGAYCAPFULL,
+        Field.CAPTAI, Field.AP, Field.XA, Field.HUYEN, Field.TINH,
+        Field.NGAYKI, Field.THANGKI, Field.NAMKI
+    };
+    private static final Field[] SV_LIST = {
+        Field.CAPTAI, Field.CMND, Field.HVT, Field.NAMCAP, Field.NGAYCAP,
+        Field.NOISINH, Field.SINHNAM, Field.SINHNGAY, Field.SINHTHANG,
+        Field.THANGCAP, Field.THUONGTRU, Field.TRINHDO, Field.XA,
+        Field.NGAYKI, Field.THANGKI, Field.NAMKI
+    };
+    private static final Field[] LL_LIST = {
+        Field.TONGIAO, Field.DANTOC, Field.NGHEME, Field.NGHEAC,
+        Field.AC1, Field.AC2, Field.AC3, Field.TUOIME, Field.TENCHA,
+        Field.HIENOCHA, Field.TENME, Field.HIENOAC, Field.HIENOME,
+        Field.THUONGTRU, Field.CAPTAI, Field.NGAYCAPFULL, Field.CMND,
+        Field.NOISINH, Field.SINHNGAY, Field.NGHECHA, Field.TUOICHA,
+        Field.SINHTHANG, Field.SINHNAM, Field.HVT, Field.TRINHDO
+    };
+    private static final Field[] HKOCEO_LIST = {
+        Field.TONGIAO, Field.DANTOC, Field.NGHEME, Field.NGHEAC,
+        Field.AC1, Field.AC2, Field.AC3, Field.TUOIME, Field.TENCHA,
+        Field.HIENOCHA, Field.TENME, Field.HIENOAC, Field.HIENOME,
+        Field.THUONGTRU, Field.CAPTAI, Field.NGAYCAPFULL, Field.CMND,
+        Field.NOISINH, Field.SINHNGAY, Field.NGHECHA, Field.TUOICHA,
+        Field.SINHTHANG, Field.SINHNAM, Field.HVT, Field.TRINHDO,
+        Field.NGAYKI, Field.THANGKI, Field.NAMKI
+    };
+    private static final Field[] LL1_LIST = {
+        Field.HVT, Field.NGAYKI, Field.XA, Field.THANGKI, Field.NAMKI
+    };
+
+    public EnumMap<Field, String> profile;
+
+    public Profile(EnumMap<Field, String> data) {
+        this.profile = data;
     }
 
-    public void store2DB() throws SQLException {
-        ArrayList<String> key_list = new ArrayList<String>();
-        for (int index : KEY_LIST) {
-            key_list.add(profile.get(index - 1));
-        }
-        String key = Concat(key_list);
-        String value = Concat(profile);
-        DatabaseController.insertWithStatement(key, value);
-
-    }
-
-    public String getSpecifiedField(int[] num_list, ArrayList<String> key_list, ArrayList<String> val_list) {
-        ArrayList<String> temp_key_list = new ArrayList<String>();
-        ArrayList<String> temp_value_list = new ArrayList<String>();
-        for (int index : num_list) {
-            temp_key_list.add(key_list.get(index - 1));
-            String value = val_list.get(index - 1);
+    public String getSpecifiedField(Field[] fields) {
+        List<String> keys = new ArrayList<>();
+        List<String> values = new ArrayList<>();
+        for (Field field : fields) {
+            keys.add(field.name().toLowerCase());
+            String value = profile.getOrDefault(field, "");
             if (value.isEmpty()) {
                 value = "\" \"";
             }
-            temp_value_list.add(value);
+            values.add(value);
         }
-        return Concat(temp_key_list) + NEW_LINE + Concat(temp_value_list);
+        return String.join(",", keys) + NEW_LINE + String.join(",", values);
     }
 
-    public Profile(ArrayList<String> infoarray) {
-        this.profile = infoarray;
+    public void store2DB() throws SQLException {
+        String key = profile.getOrDefault(Field.HVT, "") + "," + profile.getOrDefault(Field.SINHNGAY, "");
+        List<String> allValues = new ArrayList<>();
+        for (Field field : Field.values()) {
+            allValues.add(profile.getOrDefault(field, ""));
+        }
+        DatabaseController.insertWithStatement(key, String.join(",", allValues));
     }
 
-    public void exportDSV() throws IOException {
+    private void exportTo(String filename, Field[] fields) throws IOException {
         Writer out = new BufferedWriter(new OutputStreamWriter(
-                new FileOutputStream(TEXT_PATH + DSV_NAME), "UTF8"));
-        String content = getSpecifiedField(SV_LIST, ATTRNAMELIST, this.profile);
-        out.write(content);
+                new FileOutputStream(TEXT_PATH + filename), "UTF8"));
+        out.write(getSpecifiedField(fields));
         out.close();
     }
 
-    public void exportHK() throws IOException {
-        Writer out = new BufferedWriter(new OutputStreamWriter(
-                new FileOutputStream(TEXT_PATH + HK_NAME), "UTF8"));
-        String content = getSpecifiedField(HK_LIST, ATTRNAMELIST, this.profile);
-        out.write(content);
-        out.close();
-    }
-
-    public void exportLL() throws IOException {
-        Writer out = new BufferedWriter(new OutputStreamWriter(
-                new FileOutputStream(TEXT_PATH + LL_NAME), "UTF8"));
-        String content = getSpecifiedField(LL_LIST, ATTRNAMELIST, this.profile);
-        out.write(content);
-        out.close();
-    }
-
-    public void exportHKOCEO() throws IOException {
-        Writer out = new BufferedWriter(new OutputStreamWriter(
-                new FileOutputStream(TEXT_PATH + HKOCEO_NAME), "UTF8"));
-        String content = getSpecifiedField(HKOCEO_LIST, ATTRNAMELIST, this.profile);
-        out.write(content);
-        out.close();
-    }
-
-    public void exportLL1() throws IOException {
-        Writer out = new BufferedWriter(new OutputStreamWriter(
-                new FileOutputStream(TEXT_PATH + LL1_NAME), "UTF8"));
-        String content = getSpecifiedField(LL1_LIST, ATTRNAMELIST, this.profile);
-        out.write(content);
-        out.close();
-    }
-
+    public void exportDSV() throws IOException { exportTo(DSV_NAME, SV_LIST); }
+    public void exportHK() throws IOException { exportTo(HK_NAME, HK_LIST); }
+    public void exportLL() throws IOException { exportTo(LL_NAME, LL_LIST); }
+    public void exportHKOCEO() throws IOException { exportTo(HKOCEO_NAME, HKOCEO_LIST); }
+    public void exportLL1() throws IOException { exportTo(LL1_NAME, LL1_LIST); }
 }
